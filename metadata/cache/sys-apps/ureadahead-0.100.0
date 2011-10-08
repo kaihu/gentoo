@@ -1,0 +1,22 @@
+sys-libs/libnih sys-apps/util-linux >=sys-fs/e2fsprogs-1.41 sys-devel/gettext dev-util/pkgconfig
+sys-libs/libnih sys-apps/util-linux >=sys-fs/e2fsprogs-1.41
+0
+http://launchpad.net/ureadahead/trunk/0.100.0/+download/ureadahead-0.100.0.tar.gz
+
+https://launchpad.net/ureadahead
+GPL-2
+Ureadahead - Read files in advance during boot
+~x86
+eutils linux-info multilib portability toolchain-funcs versionator
+
+
+
+
+2
+
+configure install postinst setup
+
+
+
+
+
