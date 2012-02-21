@@ -1,13 +1,11 @@
-# Copyright 1999-2010 Gentoo Foundation
+# Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
 EAPI="2"
-ESVN_SERVER="http://svn.webkit.org/repository"
-ESVN_URI_APPEND="trunk"
-ESVN_SUB_PROJECT="webkit"
+ESVN_REPO_URI="http://svn.webkit.org/repository/webkit/trunk"
 
-inherit cmake-utils flag-o-matic enlightenment
+inherit cmake-utils flag-o-matic subversion
 
 DESCRIPTION="Open source web browser engine (EFL version)"
 HOMEPAGE="http://trac.webkit.org/wiki/EFLWebKit"
@@ -49,7 +47,6 @@ DEPEND="${RDEPEND}
 "
 
 CMAKE_IN_SOURCE_BUILD="enable"
-#S="${WORKDIR}/${PN}-svn-r${MY_PV}/Source"
 
 src_configure() {
 	[[ gcc-major-version == 4 ]] && [[ gcc-minor-version == 4 ]] && append-flags -fno-strict-aliasing
