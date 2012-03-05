@@ -1,4 +1,4 @@
-# Copyright 1999-2011 Gentoo Foundation
+# Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
@@ -13,10 +13,11 @@ IUSE="gtk"
 
 DEPEND=">=media-libs/edje-9999"
 
-RDEPEND="${DEPEND}
-		>=media-libs/elementary-9999
-		gtk? ( x11-libs/gtk+ )
-		"
+RDEPEND="
+	${DEPEND}
+	>=media-libs/elementary-9999
+	gtk? ( x11-libs/gtk+ )
+"
 
 src_unpack() {
 	efl_src_unpack
@@ -39,16 +40,16 @@ src_compile() {
 src_install() {
 	#E17
 	insinto /usr/share/enlightenment/data/themes
-	doins "${S}"/${PN}.edj
+	doins "${S}"/${PN}.edj || die "Installing E17 theme failed"
 	#Elm
 	insinto /usr/share/elementary/themes
-	doins "${S}"/elm/*.edj
+	doins "${S}"/elm/*.edj || die "Installing Elementary theme failed"
 	#GTK
 	use gtk && (
 	insinto /usr/share/themes
-	doins -r "${S}"/Tenebrific
+	doins -r "${S}"/Tenebrific || die "Installing GTK+ theme failed"
 	)
 	#cursors
 	insinto /usr/share/icons
-	doins -r "${S}"/Ecliz_Full
+	doins -r "${S}"/Ecliz_Full || die "Installing Cursor theme failed"
 }
