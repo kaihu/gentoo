@@ -1,6 +1,6 @@
 # Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-fs/udev/udev-181.ebuild,v 1.2 2012/02/19 07:21:53 williamh Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-fs/udev/udev-182-r3.ebuild,v 1.2 2012/04/02 04:00:05 jer Exp $
 
 EAPI=4
 
@@ -15,7 +15,7 @@ inherit ${vcs} eutils flag-o-matic multilib toolchain-funcs linux-info systemd l
 
 if [[ ${PV} != "9999" ]]
 then
-	KEYWORDS="~amd64 ~arm ~hppa ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64 ~hppa"
 	SRC_URI="mirror://kernel/linux/utils/kernel/hotplug/${P}.tar.bz2"
 	if [[ -n "${patchversion}" ]]
 	then
@@ -25,15 +25,14 @@ then
 fi
 
 DESCRIPTION="Linux dynamic and persistent device naming support (aka userspace devfs)"
-HOMEPAGE="http://www.kernel.org/pub/linux/utils/kernel/hotplug/udev.html"
+HOMEPAGE="http://www.kernel.org/pub/linux/utils/kernel/hotplug/udev/udev.html http://git.kernel.org/?p=linux/hotplug/udev.git;a=summary"
 
 LICENSE="GPL-2"
 SLOT="0"
-IUSE="build selinux debug +rule_generator hwdb acl gudev introspection
-	keymap floppy edd doc static-libs"
+IUSE="build selinux debug +rule_generator hwdb gudev introspection
+	keymap floppy doc static-libs +openrc"
 
 COMMON_DEPEND="selinux? ( sys-libs/libselinux )
-	acl? ( sys-apps/acl dev-libs/glib:2 )
 	gudev? ( dev-libs/glib:2 )
 	introspection? ( dev-libs/gobject-introspection )
 	>=sys-apps/kmod-5
@@ -59,18 +58,15 @@ else
 fi
 
 RDEPEND="${COMMON_DEPEND}
-	hwdb? ( >=sys-apps/usbutils-0.82 sys-apps/pciutils[-zlib] )
-	acl? ( sys-apps/coreutils[acl] )
-	sys-fs/udev-init-scripts
+	hwdb? ( sys-apps/hwids )
+	openrc? ( >=sys-fs/udev-init-scripts-10
+		!<sys-apps/openrc-0.9.9 )
 	!sys-apps/coldplug
 	!<sys-fs/lvm2-2.02.45
 	!sys-fs/device-mapper
-	>=sys-apps/baselayout-1.12.5"
-
-# required kernel options
-CONFIG_CHECK="~BLK_DEV_BSG ~DEVTMPFS ~HOTPLUG ~INOTIFY_USER ~NET ~PROC_FS
-	~SIGNALFD ~SYSFS ~TMPFS_POSIX_ACL
-	~!IDE ~!SYSFS_DEPRECATED ~!SYSFS_DEPRECATED_V2"
+	!<sys-fs/udev-init-scripts-10
+	!<sys-kernel/dracut-017-r1
+	!<sys-kernel/genkernel-3.4.25"
 
 udev_check_KV()
 {
@@ -83,6 +79,11 @@ udev_check_KV()
 
 pkg_setup()
 {
+	# required kernel options
+	CONFIG_CHECK="~BLK_DEV_BSG ~DEVTMPFS ~HOTPLUG ~INOTIFY_USER ~NET ~PROC_FS
+		~SIGNALFD ~SYSFS
+		~!IDE ~!SYSFS_DEPRECATED ~!SYSFS_DEPRECATED_V2"
+
 	linux-info_pkg_setup
 
 	# always print kernel version requirements
@@ -117,7 +118,7 @@ src_prepare()
 
 	# change rules back to group uucp instead of dialout for now
 	sed -e 's/GROUP="dialout"/GROUP="uucp"/' \
-		-i rules/{rules.d,arch}/*.rules \
+		-i rules/*.rules \
 	|| die "failed to change group dialout to uucp"
 
 	if [ ! -e configure ]
@@ -127,7 +128,7 @@ src_prepare()
 	else
 		# Make sure there are no sudden changes to upstream rules file
 		# (more for my own needs than anything else ...)
-		MD5=$(md5sum < "${S}/rules/rules.d/50-udev-default.rules")
+		MD5=$(md5sum < "${S}/rules/50-udev-default.rules")
 		MD5=${MD5/  -/}
 		if [[ ${MD5} != ${udev_rules_md5} ]]
 		then
@@ -150,49 +151,51 @@ src_configure()
 		$(use_with selinux) \
 		$(use_enable debug) \
 		$(use_enable rule_generator) \
-		$(use_enable hwdb) \
 		--with-pci-ids-path=/usr/share/misc/pci.ids \
 		--with-usb-ids-path=/usr/share/misc/usb.ids \
-		$(use_enable acl udev_acl) \
 		$(use_enable gudev) \
 		$(use_enable introspection) \
 		$(use_enable keymap) \
 		$(use_enable floppy) \
-		$(use_enable edd) \
 		$(use_enable doc gtk-doc) \
-		$(systemd_with_unitdir)
+		"$(systemd_with_unitdir)" \
+		--docdir=/usr/share/doc/${PF} \
+		--with-html-dir=/usr/share/doc/${PF}/html
 }
 
 src_install()
 {
-	emake DESTDIR="${D}" docdir="/usr/share/doc/${P}" install
+	emake DESTDIR="${D}" install
 
-	# documentation
-	dodoc ChangeLog README TODO
+	find "${ED}" -type f -name '*.la' -exec rm -f {} +
 
-	if use keymap
-	then
-		dodoc src/extras/keymap/README.keymap.txt
-	fi
+	dodoc ChangeLog NEWS README TODO
+	use keymap && dodoc src/keymap/README.keymap.txt
 
 	# udevadm is now in /usr/bin.
 	dosym /usr/bin/udevadm /sbin/udevadm
 
 	# create symlinks for these utilities to /sbin
 	# where multipath-tools expect them to be (Bug #168588)
-	dosym "/lib/udevd/scsi_id" /sbin/scsi_id
+	dosym /lib/udev/scsi_id /sbin/scsi_id
 
 	# Now install rules
-	insinto /lib/udev/rules.d/
+	insinto /lib/udev/rules.d
+	doins "${FILESDIR}"/40-gentoo.rules
+}
 
-	# support older kernels
-	doins rules/misc/30-kernel-compat.rules
-
-	# add arch specific rules
-	if [[ -f rules/arch/40-${ARCH}.rules ]]
-	then
-		doins "rules/arch/40-${ARCH}.rules"
-	fi
+pkg_preinst()
+{
+	local htmldir
+	for htmldir in gudev libudev; do
+		if [[ -d ${ROOT}usr/share/gtk-doc/html/${htmldir} ]]; then
+			rm -rf "${ROOT}"usr/share/gtk-doc/html/${htmldir}
+		fi
+		if [[ -d ${D}/usr/share/doc/${PF}/html/${htmldir} ]]; then
+			dosym /usr/share/doc/${PF}/html/${htmldir} \
+				/usr/share/gtk-doc/html/${htmldir}
+		fi
+	done
 }
 
 # 19 Nov 2008
@@ -355,6 +358,10 @@ pkg_postinst()
 		ewarn "For a more detailed explanation, see the following URL:"
 		ewarn "http://www.freedesktop.org/wiki/Software/systemd/separate-usr-is-broken"
 	fi
+
+	ewarn
+	ewarn "The udev-acl functionality has been removed from udev."
+	ewarn "This functionality will appear in a future version of consolekit."
 
 	elog
 	elog "For more information on udev on Gentoo, writing udev rules, and"

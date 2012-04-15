@@ -1,6 +1,6 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
+# $Header: /var/cvsroot/gentoo-x86/net-misc/connman/connman-0.75.ebuild,v 1.4 2011/10/08 14:18:55 ssuominen Exp $
 
 EAPI="2"
 
@@ -12,7 +12,7 @@ SRC_URI="mirror://kernel/linux/network/${PN}/${P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~ppc ~x86"
+KEYWORDS="~amd64 ~arm ~x86"
 IUSE="bluetooth +caps debug doc examples +ethernet google ofono ntpd openvpn policykit threads tools vpnc +wifi wimax"
 # gps meego ospm openconnect
 
@@ -34,6 +34,10 @@ RDEPEND=">=dev-libs/glib-2.16
 DEPEND="${RDEPEND}
 	>=sys-kernel/linux-headers-2.6.39
 	doc? ( dev-util/gtk-doc )"
+
+src_prepare() {
+	epatch "${FILESDIR}"/fix-for-iptables-1.4.11.patch
+}
 
 src_configure() {
 	econf \
@@ -60,6 +64,7 @@ src_configure() {
 		$(use_enable tools) \
 		--disable-iospm \
 		--disable-hh2serial-gps \
+		--disable-portal \
 		--disable-meego \
 		--disable-openconnect \
 		"$(systemd_with_unitdir systemdunitdir)"

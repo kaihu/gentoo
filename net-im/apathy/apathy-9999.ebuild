@@ -21,16 +21,12 @@ SLOT="0"
 
 RDEPEND="
 	>=media-libs/elementary-9999
-	>=dev-python/python-e_dbus-9999
 	>=dev-python/python-evas-9999
 	>=dev-python/python-ecore-9999
 	>=dev-python/python-elementary-9999
 	net-libs/telepathy-glib[introspection]
-	dev-python/telepathy-python
 	net-im/telepathy-mission-control
 	net-im/telepathy-connection-managers
-	net-voip/telepathy-haze
-	dev-python/dbus-python
 	libnotify? ( x11-libs/libnotify[introspection] )
 "
 
