@@ -23,5 +23,5 @@ RDEPEND="
 	>=dev-python/python-evas-9999
 	>=dev-python/python-ecore-9999
 	>=dev-python/python-elementary-9999
-    net-libs/rb_libtorrent[python]
+	net-libs/rb_libtorrent[python]
 "
