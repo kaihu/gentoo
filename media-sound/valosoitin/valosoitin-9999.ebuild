@@ -12,7 +12,7 @@ inherit python distutils bzr
 
 EBZR_REPO_URI="https://launchpad.net/${PN}"
 HOMEPAGE="http://launchpad.net/${PN}"
-DESCRIPTION="Epour is a simple bittorrent client using EFL and libtorrent"
+DESCRIPTION="Valosoitin is an audio player for EFL"
 
 IUSE=""
 
@@ -23,5 +23,5 @@ RDEPEND="
 	>=dev-python/python-evas-9999
 	>=dev-python/python-ecore-9999
 	>=dev-python/python-elementary-9999
-	net-libs/rb_libtorrent[python]
+	>=dev-python/python-emotion-9999
 "

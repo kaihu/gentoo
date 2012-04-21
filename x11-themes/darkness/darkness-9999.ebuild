@@ -33,8 +33,8 @@ src_compile() {
 	edje_cc -DVERSION="${ESVN_WC_REVISION}" -id images/ -fd . ${PN}.edc -o ${PN}.edj || die edje_cc failed
 	#Elm
 	cd "${S}/elm"
-	edje_cc -id . -fd ../fonts  ${PN}-desktop.edc ${PN}-elm-desktop.edj || die edje_cc failed
-	edje_cc -id . -fd ../fonts  ${PN}.edc ${PN}-elm.edj || die edje_cc failed
+	edje_cc -id . -fd ../fonts  ${PN}-desktop.edc ${PN}-desktop.edj || die edje_cc failed
+	edje_cc -id . -fd ../fonts  ${PN}.edc ${PN}.edj || die edje_cc failed
 }
 
 src_install() {
