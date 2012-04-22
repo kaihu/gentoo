@@ -24,4 +24,5 @@ RDEPEND="
 	>=dev-python/python-ecore-9999
 	>=dev-python/python-elementary-9999
 	>=dev-python/python-emotion-9999
+    media-libs/mutagen
 "
