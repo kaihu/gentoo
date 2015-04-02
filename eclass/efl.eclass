@@ -19,11 +19,8 @@
 #
 # Reqires EAPI 2 or later.
 
-# The elass expects the ebuilds to use EAPI 2 or later, so make sure this is
-# the case.
-
 case "${EAPI}" in
-	2|3|4) ;;
+	2|3|4|5) ;;
 	*) die "EAPI 2 or later required";;
 esac
 
@@ -55,8 +52,52 @@ IUSE="${E_PKG_IUSE}"
 # Default svn repository to use.
 E_LIVE_SERVER_DEFAULT_SVN="http://svn.enlightenment.org/svn/e/trunk"
 
-E_STATE="release"
+# @ECLASS-VARIABLE: E_EXTERNAL
+# @DESCRIPTION:
+# If defined, efl.eclass will not automatically inherit subversion and do any
+# magic for it
+: ${E_EXTERNAL:=}
 
+# @ECLASS-VARIABLE: E_EXTERNAL
+# @DESCRIPTION:
+# If defined, efl.eclass will not automatically inherit subversion and do any
+# magic for it
+: ${E_GIT_PROJECT:=}
+
+# @ECLASS-VARIABLE: E_LIVE_OFFLINE
+# @DESCRIPTION:
+# Use ESCM_OFFLINE="yes" only for enlightenment packages. Usefull if you want to
+# have manual control over subversion revisions
+: ${E_LIVE_OFFLINE:=}
+
+# @ECLASS-VARIABLE: ESVN_URI_APPEND
+# @DESCRIPTION:
+# This is addition to final default svn repo path, namely package name
+: ${ESVN_URI_APPEND:=${PN}}
+
+# @ECLASS-VARIABLE: ESVN_SUB_PROJECT
+# @DESCRIPTION:
+# Sub-group into svn.enlightenment.org repository trunk
+: ${ESVN_SUB_PROJECT:=}
+
+# @ECLASS-VARIABLE: EFL_GIT_BASE_PATH
+# @DESCRIPTION:
+# Initial part of any official git repository url.
+# You may respecify it to use local mirror instead of official git server
+# Do NOT end it with slash '/'
+: ${EFL_GIT_BASE_PATH:="git://git.enlightenment.org"}
+
+# @ECLASS-VARIABLE: EFL_GIT_REPO_NAME
+# @DESCRIPTION:
+# Final part of git url, name of the repository. Default: ${PN}
+: ${EFL_GIT_REPO_NAME:=${PN}}
+
+# @ECLASS-VARIABLE: EFL_GIT_REPO_CATEGORY
+# @DESCRIPTION:
+# Middle part of git url, category of the repository. Default: None
+: ${EFL_GIT_REPO_CATEGORY:=}
+
+E_STATE="release"
 if [[ ${PV/9999} != ${PV} ]] ; then
 	E_STATE="live"
 
@@ -67,44 +108,29 @@ if [[ ${PV/9999} != ${PV} ]] ; then
 
 	: ${WANT_AUTOTOOLS:=yes}
 
-# @ECLASS-VARIABLE: E_EXTERNAL
-# @DESCRIPTION:
-# If defined, efl.eclass will not automatically inherit subversion and do any
-# magic for it
 	if [[ -z "${E_EXTERNAL}" ]]; then
-# @ECLASS-VARIABLE: E_LIVE_OFFLINE
-# @DESCRIPTION:
-# Use ESCM_OFFLINE="yes" only for enlightenment packages. Usefull if you want to
-# have manual control over subversion revisions
-		[[ -n ${E_LIVE_OFFLINE} ]] && ESCM_OFFLINE="yes"
+		if [[ -z "${EFL_USE_GIT}" ]]; then
+			[[ -n ${E_LIVE_OFFLINE} ]] && ESCM_OFFLINE="yes"
 
-# @ECLASS-VARIABLE: E_LIVE_SERVER
-# @DESCRIPTION:
-# Use another server than the default svn repo
-		: ${E_LIVE_SERVER:=${E_LIVE_SERVER_DEFAULT_SVN}}
+			E_LIVE_SERVER=${E_LIVE_SERVER_DEFAULT_SVN}
+			ESVN_PROJECT="enlightenment/${ESVN_SUB_PROJECT}"
+			ESVN_REPO_URI="${E_LIVE_SERVER}/${ESVN_SUB_PROJECT}/${ESVN_URI_APPEND}"
 
-# @ECLASS-VARIABLE: ESVN_URI_APPEND
-# @DESCRIPTION:
-# This is addition to final default svn repo path, namely package name
-		ESVN_URI_APPEND=${ESVN_URI_APPEND:-${PN}}
+			S="${WORKDIR}/${ESVN_URI_APPEND}"
 
-# @ECLASS-VARIABLE: ESVN_SUB_PROJECT
-# @DESCRIPTION:
-# Sub-group into svn.enlightenment.org repository trunk
-		ESVN_URI_APPEND=${ESVN_URI_APPEND:-${PN}}
-
-		ESVN_PROJECT="enlightenment/${ESVN_SUB_PROJECT}"
-		ESVN_REPO_URI="${E_LIVE_SERVER}/${ESVN_SUB_PROJECT}/${ESVN_URI_APPEND}"
-
-		S="${WORKDIR}/${ESVN_URI_APPEND}"
-
-		inherit subversion
+			inherit subversion
+		else
+			EGIT_REPO_URI="${EFL_GIT_BASE_PATH}/${EFL_GIT_REPO_CATEGORY}"
+			EGIT_REPO_URI="${EGIT_REPO_URI}/${EFL_GIT_REPO_NAME}.git"
+			EGIT_MIN_CLONE_TYPE=single
+			inherit git-r3
+		fi
 	fi
 fi
 
 if [[ -n "${E_PYTHON}" ]]; then
-	PYTHON_DEPEND="2:2.4"
-	inherit python
+	PYTHON_COMPAT=( python{2_7,3_2,3_3,3_4} )
+	inherit python-r1
 fi
 
 
@@ -120,7 +146,7 @@ HOMEPAGE="http://www.enlightenment.org/"
 LICENSE="BSD"
 SLOT="0"
 
-DEPEND="${DEPEND} dev-util/pkgconfig"
+DEPEND="${DEPEND} virtual/pkgconfig"
 
 if has nls ${IUSE}; then
 	DEPEND="${DEPEND} nls? ( sys-devel/gettext )"
@@ -177,26 +203,17 @@ efl_src_test() {
 	emake -j1 check || die "Make check failed. see above for details"
 }
 
-# @FUNCTION: gettext_modify
-# @USAGE:
-# @DESCRIPTION:
-# the stupid gettextize script prevents non-interactive mode, so we hax it
-gettext_modify() {
-	if has nls ${IUSE} && use nls; then
-		cp $(type -P gettextize) "${T}"/ || die "could not copy gettextize"
-		sed -i \
-			-e 's:read dummy < /dev/tty::' \
-			"${T}"/gettextize
-	fi
-}
-
 # @FUNCTION: efl_src_unpack
 # @USAGE:
 # @DESCRIPTION:
-# calls subversion_src_unpack for live packages otherwise default_src_unpack
+# calls <scm>_src_unpack for live packages otherwise default_src_unpack
 efl_src_unpack() {
-	if [[ "${E_STATE}" == "live" ]] ; then
-		subversion_src_unpack
+	if [[ "${E_STATE}" == "live" ]]; then
+		if [[ -z "${EFL_USE_GIT}" ]]; then
+			subversion_src_unpack
+		else
+			git-r3_src_unpack
+		fi
 	else
 		default_src_unpack
 	fi
@@ -205,9 +222,9 @@ efl_src_unpack() {
 # @FUNCTION: efl_src_prepare
 # @USAGE:
 # @DESCRIPTION:
-# Applys the gettext_modifiy hack and runs the autotools stuff.
+# Runs the autotools stuff.
 efl_src_prepare() {
-	gettext_modify
+	epatch_user
 
 	[[ -s gendoc ]] && chmod a+rx gendoc
 
@@ -223,7 +240,6 @@ efl_src_prepare() {
 		eautoreconf
 	fi
 
-	epunt_cxx
 	elibtoolize
 }
 
@@ -243,7 +259,7 @@ efl_src_configure() {
 		fi
 
 		econf ${MY_ECONF} || efl_die "configure failed"
-	fi
+fi
 }
 
 # @FUNCTION: efl_src_compile
@@ -289,6 +305,7 @@ efl_src_install() {
 		fi
 	fi
 
+	# Needed only for subversion-1.6. Remove as soon as only 1.7 will remain
 	find "${D}" -name .svn -type d -exec rm -rf '{}' \; 2>/dev/null
 }
 

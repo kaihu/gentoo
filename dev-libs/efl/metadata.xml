@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer>
+    <email>kai.huuhko@gmail.com</email>
+    <name>Kai Huuhko</name>
+  </maintainer>
+  <use>
+    <flag name="audio"></flag>
+    <flag name="bmp"></flag>
+    <flag name="drm-hw-accel"></flag>
+    <flag name="cserve"></flag>
+    <flag name="cxx-bindings">Enable C++ bindings</flag>
+    <flag name="dds"></flag>
+    <flag name="drm"></flag>
+    <flag name="eet"></flag>
+    <flag name="egl"></flag>
+    <flag name="eo-id"></flag>
+    <flag name="fribidi"></flag>
+    <flag name="g-main-loop"></flag>
+    <flag name="gesture"></flag>
+    <flag name="gl-drm"></flag>
+    <flag name="gles"></flag>
+    <flag name="glib"></flag>
+    <flag name="harfbuzz"></flag>
+    <flag name="ibus"></flag>
+    <flag name="i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aba"></flag>
+    <flag name="ico"></flag>
+    <flag name="image-loader-generic"></flag>
+    <flag name="jp2k"></flag>
+    <flag name="liblz4"></flag>
+    <flag name="libmount"></flag>
+    <flag name="magic-debug"></flag>
+    <flag name="multisense"></flag>
+    <flag name="openssl"></flag>
+    <flag name="physics"></flag>
+    <flag name="pixman"></flag>
+    <flag name="pixman-font"></flag>
+    <flag name="pixman-image"></flag>
+    <flag name="pixman-image-scale-sample"></flag>
+    <flag name="pixman-line"></flag>
+    <flag name="pixman-poly"></flag>
+    <flag name="pixman-rect"></flag>
+    <flag name="pmaps"></flag>
+    <flag name="psd"></flag>
+    <flag name="scim"></flag>
+    <flag name="tga"></flag>
+    <flag name="tgv"></flag>
+    <flag name="tile-rotate"></flag>
+    <flag name="tslib"></flag>
+    <flag name="v4l2"></flag>
+    <flag name="wayland-ivi-shell"></flag>
+    <flag name="wbmp"></flag>
+    <flag name="webp"></flag>
+    <flag name="xim"></flag>
+    <flag name="xinput2"></flag>
+    <flag name="xinput22"></flag>
+    <flag name="xpresent"></flag>
+  </use>
+</pkgmetadata>
