@@ -4,19 +4,19 @@
 
 EAPI=5
 
-MODULE_AUTHOR="STEVAN"
-MODULE_VERSION="0.02"
+MODULE_AUTHOR="JMGDOC"
+MODULE_VERSION="2.125"
 
 
 inherit perl-module
 
-DESCRIPTION="Simple role to provide a standard param method"
+DESCRIPTION="The Perl Open OpenDocument Connector"
 
 LICENSE="|| ( Artistic GPL-1 GPL-2 GPL-3 )"
 SLOT="0"
 KEYWORDS="~x86"
 IUSE=""
 
-DEPEND=">=dev-perl/Moose-2.60.400
-	>=dev-perl/Test-Exception-0.320.0
+DEPEND=">=dev-perl/Archive-Zip-1.300.0
+	>=dev-perl/XML-Twig-3.440.0
 	dev-lang/perl"

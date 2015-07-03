@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer>
+    <email>kai.huuhko@gmail.com</email>
+    <name>Kai Huuhko</name>
+  </maintainer>
+  <use>
+    <flag name="cxx-bindings">Enable C++ bindings</flag>
+    <flag name="emap"></flag>
+    <flag name="location"></flag>
+    <flag name="quicklaunch"></flag>
+    <flag name="weather"></flag>
+    <flag name="xdg"></flag>
+  </use>
+</pkgmetadata>

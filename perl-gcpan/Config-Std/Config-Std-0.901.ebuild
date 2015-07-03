@@ -4,19 +4,18 @@
 
 EAPI=5
 
-MODULE_AUTHOR="STEVAN"
-MODULE_VERSION="0.02"
+MODULE_AUTHOR="BRICKER"
+MODULE_VERSION="0.901"
 
 
 inherit perl-module
 
-DESCRIPTION="Simple role to provide a standard param method"
+DESCRIPTION="Load and save configuration files in a standard format"
 
 LICENSE="|| ( Artistic GPL-1 GPL-2 GPL-3 )"
 SLOT="0"
 KEYWORDS="~x86"
 IUSE=""
 
-DEPEND=">=dev-perl/Moose-2.60.400
-	>=dev-perl/Test-Exception-0.320.0
+DEPEND="perl-gcpan/Class-Std
 	dev-lang/perl"

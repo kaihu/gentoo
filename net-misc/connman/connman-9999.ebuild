@@ -14,7 +14,7 @@ HOMEPAGE="http://connman.net"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~x86"
+KEYWORDS=""
 IUSE="bluetooth +caps debug doc examples +ethernet google ofono ntpd openvpn policykit threads tools vpnc +wifi wimax"
 # nmcompat pacrunner tist fake
 # gps portal meego ospm openconnect
