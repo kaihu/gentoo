@@ -341,6 +341,8 @@ src_configure() {
 		$(use_enable v4l2)
 		$(use_enable examples always-build-examples)
 
+        $(use_enable i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aba)
+
 		--with-api=both
 		--with-id=gentoo
 
