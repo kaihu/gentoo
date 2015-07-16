@@ -25,7 +25,6 @@ IUSE_ENLIGHTENMENT_MODULES="
 	+clock
 	+conf
 	+connman
-	contact
 	+cpufreq
 	+everything
 	+fileman
@@ -76,6 +75,7 @@ IUSE_ENLIGHTENMENT_MODULES="
 	+conf-window_remembers
 "
     #access
+    #contact
     #wl-fb
 
 RDEPEND="
@@ -142,15 +142,15 @@ src_configure() {
 	export MY_ECONF="
 	  ${MY_ECONF}
 	  --disable-install-sysactions
-	  --disable-device-hal
 	  $(use_enable pam)
 	  $(use_enable eeze mount-eeze)
 	  $(use_enable udev device-udev)
 	  $(use_enable udisks mount-udisks)
 	  $(use_enable sysactions install-sysactions)
-	  $(use_enable wayland wayland-clients)
+	  $(use_enable wayland)
 	  $(use_enable egl wayland-egl)
 	"
+      #--disable-device-hal
 
 	local module=
 
