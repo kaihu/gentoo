@@ -18,7 +18,6 @@ IUSE="eeze illume2 opengl pam pm-utils +sysactions systemd tracker
 		+udev udisks wayland xinerama xscreensaver debug egl"
 
 IUSE_ENLIGHTENMENT_MODULES="
-	access
 	+appmenu
 	+backlight
 	+battery
@@ -32,6 +31,7 @@ IUSE_ENLIGHTENMENT_MODULES="
 	+fileman
 	+fileman_opinfo
 	+gadman
+    +geolocation
 	+ibar
 	+ibox
 	+lokker
@@ -41,7 +41,8 @@ IUSE_ENLIGHTENMENT_MODULES="
 	+notification
 	+packagekit
 	+pager
-	+pager16
+	+pager-plain
+    +policy-mobile
 	+quickaccess
 	+shot
 	+start
@@ -51,13 +52,13 @@ IUSE_ENLIGHTENMENT_MODULES="
 	+teamwork
 	+temperature
 	+tiling
-	+wl-desktop-shell
-	wl-x11
-	wl-fb
-	wl-drm
 	+winlist
 	+wizard
+    wl-desktop-shell
+    wl-drm
+    wl-x11
 	+xkbswitch
+    xwayland
 
 	+conf-applications
 	+conf-bindings
@@ -74,6 +75,8 @@ IUSE_ENLIGHTENMENT_MODULES="
 	+conf-window_manipulation
 	+conf-window_remembers
 "
+    #access
+    #wl-fb
 
 RDEPEND="
 	pam? ( sys-libs/pam )
@@ -97,7 +100,12 @@ RDEPEND="
 	debug? ( sys-devel/gdb )
 "
 
-REQUIRED_USE="enlightenment_modules_wl-desktop-shell? ( wayland )"
+REQUIRED_USE="
+    enlightenment_modules_wl-desktop-shell? ( wayland )
+    enlightenment_modules_wl-drm? ( wayland )
+    enlightenment_modules_wl-x11? ( wayland )
+    enlightenment_modules_xwayland? ( wayland )
+"
 
 DEPEND="${RDEPEND}"
 
