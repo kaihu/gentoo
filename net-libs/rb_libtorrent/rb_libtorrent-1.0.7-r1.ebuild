@@ -44,6 +44,12 @@ PATCHES=( "${FILESDIR}"/${PN}-1.0.2-python.patch )
 
 AUTOTOOLS_IN_SOURCE_BUILD=1
 
+src_prepare() {
+	use python && cp ${FILESDIR}/ax_python_devel.m4 ${S}/m4/
+
+	autotools-utils_src_prepare	
+}
+
 src_configure() {
 	local myeconfargs=(
 		--disable-silent-rules # bug 441842
