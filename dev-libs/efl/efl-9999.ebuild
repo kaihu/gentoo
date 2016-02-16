@@ -27,10 +27,10 @@ IUSE="
 	systemd
 	magic-debug
 	+cxx-bindings
-	-wayland
+	wayland
 	-wayland-ivi-shell
 	-fbcon -sdl
-	-drm -drm-hw-accel -gl-drm
+	-drm -gl-drm
 
 	+ibus -harfbuzz -egl
 
@@ -301,7 +301,6 @@ src_configure() {
 		$(use_enable fbcon fb)
 		$(use_enable sdl)
 		$(use_enable drm)
-		$(use_enable drm-hw-accel)
 		$(use_enable gl-drm)
 		$(use_enable fontconfig)
 		$(use_enable fribidi)
